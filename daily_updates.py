@@ -13,7 +13,7 @@ RSS_SOURCES = {
     "Crypto": "https://cointelegraph.com/rss",
     "Artificial Intelligence": "https://techcrunch.com/category/artificial-intelligence/feed/",
     "Technology": "https://techcrunch.com/feed/",
-    "Israel News": "https://www.timesofisrael.com/feed/",
+    "Israel News": "https://www.jpost.com/rss/rssfeedsisraelnews.aspx",
 }
 
 MAX_HEADLINES_PER_TOPIC = 15
