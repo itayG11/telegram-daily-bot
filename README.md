@@ -25,7 +25,7 @@ flowchart LR
 | Crypto | Cointelegraph |
 | Artificial Intelligence | TechCrunch (AI) |
 | Technology | TechCrunch |
-| Israel News | The Times of Israel |
+| Israel News | The Jerusalem Post |
 
 ## Project structure
 
