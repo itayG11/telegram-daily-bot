@@ -2,19 +2,40 @@ name: Daily Telegram Update
 
 on:
   schedule:
-    - cron: '0 4 * * *'
+    # Main run. Minute 17 (not 0) because GitHub's scheduler is most congested on the hour.
+    - cron: '17 4 * * *'
+    # Backup run: only sends if the main run did not succeed today.
+    - cron: '47 5 * * *'
   workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: read
 
 jobs:
   send-update:
     runs-on: ubuntu-latest
     steps:
+      - name: Check if today's digest was already sent
+        id: check
+        if: github.event_name == 'schedule'
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          today=$(date -u +%F)
+          sent=$(gh run list --repo "$GITHUB_REPOSITORY" --workflow daily.yml --status success --created ">=$today" --json databaseId --jq 'length')
+          echo "Successful runs today: $sent"
+          if [ "$sent" -gt 0 ]; then echo "skip=true" >> "$GITHUB_OUTPUT"; fi
       - uses: actions/checkout@v4
+        if: steps.check.outputs.skip != 'true'
       - uses: actions/setup-python@v5
+        if: steps.check.outputs.skip != 'true'
         with:
           python-version: '3.12'
       - run: pip install -r requirements.txt
+        if: steps.check.outputs.skip != 'true'
       - run: python daily_updates.py
+        if: steps.check.outputs.skip != 'true'
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
